@@ -30,3 +30,7 @@
 (동일한 정렬 기준을 가진 원소들의 순서가 정렬 후에도 바뀌지 않으면 stable하다고 한다.)
 
 참고로 merge sort, insertion sort가 대표적인 stable sort 알고리즘이고 unstable sort의 대표적인 알고리즘은 quick sort이다.
+
+ - C++11 이후의 auto는 초기화 값에 따라 자동적으로 data type을 정하는 keyword 이다.
+   (js의 var과 비슷한 개념이다)
+ - vector의 요소의 값을 변경하는 것이 아닌, 단순 출력 용도로 참조할 경우에는 copy overhead를 피하기 위해 const &를 이용하는 것이 좋다.
