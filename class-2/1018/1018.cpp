@@ -20,7 +20,6 @@ int main() {
 		}
 	}
 
-
 	for (int i = 0; i < M - 7; i++) {
 		for (int j = 0; j < N - 7; j++) {
 
