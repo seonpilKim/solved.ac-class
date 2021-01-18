@@ -17,3 +17,12 @@
 제한
 ----
 Time Limit : 2s
+
+풀이
+----
+50만 data를 2초안에 처리하기 위해 시간복잡도가 O(NlogN)이하로 구성된 함수들을 사용하였다.
+ - sort() : O(NlogN)
+ - unique() : O(N)
+ - erase() : O(1)
+ - push_back() : O(1)
+ - lower_bound : O(logN)
