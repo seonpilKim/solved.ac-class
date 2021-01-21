@@ -31,6 +31,7 @@ public:
 
 	void Link(int pc1, int pc2) {
 		computers[pc1].network.push_back(&computers[pc2]);
+		computers[pc2].network.push_back(&computers[pc1]);
 	}
 
 	void DFS() {
@@ -45,7 +46,7 @@ public:
 
 	void DFS(PC* pc) {
 		for (int i = 0; i < pc->network.size(); i++) {
-			if (pc->network[i]->visited == false) {
+			if (pc->network[i]->visited == false && pc->network[i]->number != 1) {
 				this->count++;
 				pc->network[i]->visited = true;
 				DFS(pc->network[i]);
