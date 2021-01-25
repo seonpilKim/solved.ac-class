@@ -33,7 +33,7 @@ public:
 };
 
 int N, M, total, days = 0;
-queue<Tomato> q;
+queue<Tomato> q, preq;
 Box* box;
 
 void input();
@@ -67,36 +67,56 @@ void input() {
 int getDays() {
 	int n = 0;
 	bool infect;
-	while (true) {
-		// 익은 토마토인경우 큐에 추가
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < M; j++) {
-				if (box->xy[i][j].n == 1 && box->xy[i][j].visited == false) {
-					q.push(box->xy[i][j]);
-					box->xy[i][j].visited = true;
-					n++;
-				}
-			}
-		}
-		if (q.empty()) break;
 
-		infect = false;
-		while (!q.empty()) {
-			Tomato cur = q.front(); q.pop();
-			if (cur.y + 1 < M && box->xy[cur.x][cur.y + 1].n == 0) { box->xy[cur.x][cur.y + 1].n = 1; infect = true; }
-			if (cur.x + 1 < N && box->xy[cur.x + 1][cur.y].n == 0) { box->xy[cur.x + 1][cur.y].n = 1; infect = true; }
-			if (cur.y - 1 >= 0 && box->xy[cur.x][cur.y - 1].n == 0) { box->xy[cur.x][cur.y - 1].n = 1; infect = true; }
-			if (cur.x - 1 >= 0 && box->xy[cur.x - 1][cur.y].n == 0) { box->xy[cur.x - 1][cur.y].n = 1; infect = true; }
-		}
-		if (infect) days++;
-	}
-
-	// 익지않은 토마토가 있는지 찾기
+	// 초기 익은 토마토 큐에 추가
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
-			if (box->xy[i][j].n == 0) return -1;
+			if (box->xy[i][j].n == 1) {
+				q.push(box->xy[i][j]);
+				n++;
+			}
 		}
 	}
+
+	while (true) {
+		infect = false;
+
+		// BFS
+		while (!q.empty()) {
+			Tomato cur = q.front(); q.pop();
+			if (cur.y + 1 < M && box->xy[cur.x][cur.y + 1].n == 0) { 
+				box->xy[cur.x][cur.y + 1].n = 1; 
+				infect = true; 
+				preq.push(box->xy[cur.x][cur.y + 1]); 
+				n++;
+			}
+			if (cur.x + 1 < N && box->xy[cur.x + 1][cur.y].n == 0) { 
+				box->xy[cur.x + 1][cur.y].n = 1; 
+				infect = true; 
+				preq.push(box->xy[cur.x + 1][cur.y]);
+				n++;
+			}
+			if (cur.y - 1 >= 0 && box->xy[cur.x][cur.y - 1].n == 0) { 
+				box->xy[cur.x][cur.y - 1].n = 1; 
+				infect = true; 
+				preq.push(box->xy[cur.x][cur.y - 1]);
+				n++;
+			}
+			if (cur.x - 1 >= 0 && box->xy[cur.x - 1][cur.y].n == 0) { 
+				box->xy[cur.x - 1][cur.y].n = 1; 
+				infect = true; 
+				preq.push(box->xy[cur.x - 1][cur.y]);
+				n++;
+			}
+		}
+
+		while (!preq.empty()) { q.push(preq.front()); preq.pop(); }
+		if (infect) days++;
+		if (q.empty()) break;
+	}
+
+	// 익지않은 토마토가 있는지 판별
+	if (n != total) return -1;
 
 	return days;
 }
