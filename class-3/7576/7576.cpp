@@ -67,7 +67,7 @@ void input() {
 int getDays() {
 	int n = 0;
 	bool infect;
-	while (n != total) {
+	while (true) {
 		// 익은 토마토인경우 큐에 추가
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
@@ -78,16 +78,17 @@ int getDays() {
 				}
 			}
 		}
+		if (q.empty()) break;
 
+		infect = false;
 		while (!q.empty()) {
 			Tomato cur = q.front(); q.pop();
-			infect = false;
 			if (cur.y + 1 < M && box->xy[cur.x][cur.y + 1].n == 0) { box->xy[cur.x][cur.y + 1].n = 1; infect = true; }
-			if (cur.x + 1 < N && box->xy[cur.x + 1][cur.y].n == 0) { box->xy[cur.x][cur.y + 1].n = 1; infect = true; }
-			if (cur.y - 1 > 0 && box->xy[cur.x][cur.y - 1].n == 0) { box->xy[cur.x][cur.y + 1].n = 1; infect = true; }
-			if (cur.x - 1 > 0 && box->xy[cur.x - 1][cur.y].n == 0) { box->xy[cur.x][cur.y + 1].n = 1; infect = true; }
-			if (infect) days++;
+			if (cur.x + 1 < N && box->xy[cur.x + 1][cur.y].n == 0) { box->xy[cur.x + 1][cur.y].n = 1; infect = true; }
+			if (cur.y - 1 >= 0 && box->xy[cur.x][cur.y - 1].n == 0) { box->xy[cur.x][cur.y - 1].n = 1; infect = true; }
+			if (cur.x - 1 >= 0 && box->xy[cur.x - 1][cur.y].n == 0) { box->xy[cur.x - 1][cur.y].n = 1; infect = true; }
 		}
+		if (infect) days++;
 	}
 
 	// 익지않은 토마토가 있는지 찾기
