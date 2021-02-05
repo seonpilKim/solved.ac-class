@@ -39,39 +39,37 @@ int main() {
 		memset(party[i], 0, sizeof(int) * (N + 1));
 	}
 
+	// 진실을 아는 사람 입력 및 세팅
 	cin >> n;
 	for (int i = 0; i < n; i++) {
 		cin >> person;
 		people[person].know = true;
 	}
 
-	Person* root = nullptr;
 	Person* prev = nullptr;
 	bool flag;
+	
+	// 파티 입력 및 세팅
 	for (int i = 1; i <= M; i++) {
 		cin >> n;
 		flag = false;
+		
+		// 각 파티에 참가한 사람들 입력 및 세팅
 		for (int j = 0; j < n; j++) {
 			cin >> person;
 			party[i][person] = 1;
-			if (people[person].know == true) {
-				flag = true;
-				root = &people[person];
-			}
-			if (j > 0) Union(prev, &people[person]);		
-			prev = &people[person];
-		}
-		if (flag) {
-			for (int j = 1; j <= N; j++) {
-				if (party[i][j] == 1) Union(root, &people[j]);
-			}
+
+			// 현재 파티에 있는 사람들 합집합연산
+			if (j > 0) Union(prev, &people[person]);	
+			prev = &people[person];	
 		}
 	}
 	
+	// M개의 파티를 돌면서 진실을 아는 사람이 속한 경우, cnt--
 	for (int i = 1; i <= M; i++) {
-		for (int j = 1; j <= N; j++) {
-			if (party[i][j] == 1) {
-				if (Find(&people[j])->know == true) {
+		for (person = 1; person <= N; person++) {
+			if (party[i][person] == 1) {
+				if (Find(&people[person])->know == true) {
 					cnt--;
 					break;
 				}
@@ -84,7 +82,6 @@ int main() {
 	return 0;
 }
 
-
 Person* Find(Person* cur) {
 	if (cur->par == nullptr) return cur;
 	else return Find(cur->par);
@@ -96,5 +93,8 @@ void Union(Person* p1, Person* p2) {
 	if (par1 != par2) {
 		if (par1->number < par2->number) par2->par = par1;
 		else par1->par = par2;
+
+		// 한 집합이 진실을 아는 집합일 경우 다른 한 집합도 전염
+		if (par1->know || par2->know) par1->know = par2->know = true;
 	}
 }
