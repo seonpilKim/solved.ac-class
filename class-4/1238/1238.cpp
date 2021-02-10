@@ -1,95 +1,118 @@
 #include <iostream>
 #include <string.h>
+#include <limits.h>
+#include <queue>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
-// 시간제한 1초
-// N : 마을 수 [1,1,000]
-// M : 단방향 도로 수 [1,10,000]
-// X : 파티하는 마을 번호
-int N, M, X, S, min;
-int** graph;
-int** dp;
-int* visited;
+#define INF INT_MAX
+#define NONE -1
 
-void DFS(int, int);
-void DFS2(int, int);
+int N, M, X;
+int* len;
+int* V;
+int** E;
+
 void input();
+void Dijkstra();
+void Dijkstra2();
+
+struct compare {
+	bool operator()(pair<int, int> v1, pair<int, int> v2) {
+		return v1.second < v2.second;
+	}
+};
+
+priority_queue<pair<int,int>, vector<pair<int, int>>, compare> pq;
 
 int main() {
-	int max = 0, len;
-	
 	input();
 
-	for (int i = 1; i <= N; i++) {
-		if (i != X) {
-			S = i;
-			DFS(i, 0);
-			memset(visited, 0, sizeof(int) * (N + 1));
-			DFS2(X, 0);
-			memset(visited, 0, sizeof(int) * (N + 1));
-		}
-	}
+	Dijkstra();
+	Dijkstra2();
 
-	for (int i = 1; i <= N; i++) {
-		len = dp[i][X] + dp[X][i];
-		if (i != X && len > max) max = len;
-	}
-
-	cout << max;
+	sort(len, len + N + 1);
+	cout << len[N];
 
 	return 0;
 }
 
 void input() {
-	int start, dest, time;
-
-	ios_base::sync_with_stdio(false);
-	cin.tie(0);
+	int v1, v2, t;
 
 	cin >> N >> M >> X;
 
-	visited = new int[N + 1];
-	memset(visited, 0, sizeof(int) * (N + 1));
+	len = new int[N + 1];
+	memset(len, 0, sizeof(int) * (N + 1));
 
-	graph = new int* [N + 1];
-	dp = new int* [N + 1];
+	V = new int[N + 1];
+	fill(V, V + N + 1, INF);
+	/*
+		memset()의 2번째 인자는 single byte이다.
+		memset()은 해당 메모리의 특정위치를 int로 채우는 것이 아니라 single bytes로 채운다.
+		int값을 unsigned char형으로 변환하여 채우기에 값이 달라질 수 있음.
+
+		char, unsigned char을 제외한 변수는 0이외의 값으로 초기화하면 안된다.
+		https://beautyrain.tistory.com/7 참고
+		std::fill()함수를 사용하자.
+	*/
+	V[X] = 0;
+
+	E = new int* [N + 1];
 	for (int i = 0; i <= N; i++) {
-		graph[i] = new int[N + 1];
-		memset(graph[i], -1, sizeof(int) * (N + 1));
-		dp[i] = new int[N + 1];
-		memset(dp[i], -1, sizeof(int) * (N + 1));
+		E[i] = new int[N + 1];
+		fill(E[i], E[i] + N + 1, NONE);
 	}
-
 
 	for (int i = 0; i < M; i++) {
-		cin >> start >> dest >> time;
-		graph[start][dest] = time;
+		cin >> v1 >> v2 >> t;
+		E[v1][v2] = t;
 	}
 }
 
-void DFS(int start, int len) {
-	visited[start] = 1;
-	for (int d = 1; d <= N; d++) {
-		if (graph[start][d] != -1 && visited[d] != 1) {
-			int sum = graph[start][d] + len;
-			if (d == X) {
-				if (dp[S][d] == -1 || dp[S][d] > sum) dp[S][d] = sum;				
+void Dijkstra() {
+	pq.push(pair<int, int>(X, V[X]));
+
+	while (!pq.empty()) {
+		int vertex = pq.top().first; pq.pop();
+		for (int v = 1; v <= N; v++) {
+			if (E[vertex][v] != NONE) {
+				if (V[vertex] + E[vertex][v] < V[v]) {
+					V[v] = V[vertex] + E[vertex][v];
+					pq.push(pair<int, int>(v, V[v]));
+				}
 			}
-			else DFS(d, sum);
 		}
 	}
+	for (int v = 1; v <= N; v++) {
+		len[v] += V[v];
+	}
 }
 
-void DFS2(int start, int len) {
-	visited[start] = 1;
-	for (int d = 1; d <= N; d++) {
-		if (graph[start][d] != -1 && visited[d] != 1) {
-			int sum = graph[start][d] + len;
-			if (d == S) {
-				if (dp[X][d] == -1 || dp[X][d] > sum) dp[X][d] = sum;
+void Dijkstra2() {
+	for (int i = 1; i <= N; i++) {
+		if (i != X) {
+			pq.push(pair<int, int>(i, V[i]));
+
+			for (int j = 1; j <= N; j++) {
+				if (j == i) V[j] = 0;
+				else V[j] = INF;
 			}
-			else DFS2(d, sum);
+
+			while (!pq.empty()) {
+				int vertex = pq.top().first; pq.pop();
+				for (int v = 1; v <= N; v++) {
+					if (E[vertex][v] != NONE) {
+						if (V[vertex] + E[vertex][v] < V[v]) {
+							V[v] = V[vertex] + E[vertex][v];
+							pq.push(pair<int, int>(v, V[v]));
+						}
+					}
+				}
+			}
+			len[i] += V[X];
 		}
 	}
 }
