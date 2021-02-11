@@ -19,3 +19,7 @@
 
 풀이
 ----
+Dijkstra Algorithm을 총 3번 적용하였다 : 1->v1->v2->N
+1->v1->v2->N과 1->v2->v1->N의 경우에서 어느 경로가 더 빠른 경우인지도 고려해야 함.
+
+p.s) C++ STL의 Priority Queue는 가장 큰 값을 먼저 pop하므로 struct의 operator() return 방향에 주의하자.

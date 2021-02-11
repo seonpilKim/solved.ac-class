@@ -14,16 +14,16 @@ using namespace std;
 #define NOPATH -1
 
 int N, E, V1, V2;
-int len = 0;
+int len = 0, len2 = 0;
 int* Vertex;
 int** Edge;
 
 void input();
-void Dijkstra(int, int);
+void Dijkstra(int, int, int);
 
 struct compare {
 	bool operator()(pair<int, int> v1, pair<int, int> v2) {
-		return v1.second < v2.second;
+		return v1.second > v2.second;
 	}
 };
 
@@ -32,11 +32,15 @@ priority_queue<pair<int,int>, vector<pair<int, int>>, compare> pq;
 int main() {
 	input();
 
-	Dijkstra(1, V1);
-	if (len != NOPATH) Dijkstra(V1, V2);
-	if (len != NOPATH) Dijkstra(V2, N);
+	Dijkstra(1, V1, 1);
+	if (len != NOPATH) Dijkstra(V1, V2, 1);
+	if (len != NOPATH) Dijkstra(V2, N, 1);
 
-	cout << len;
+	Dijkstra(1, V2, 2);
+	if (len2 != NOPATH) Dijkstra(V2, V1, 2);
+	if (len2 != NOPATH) Dijkstra(V1, N, 2);
+
+	cout << min(len, len2);
 
 	return 0;
 }
@@ -65,7 +69,7 @@ void input() {
 	cin >> V1 >> V2;
 }
 
-void Dijkstra(int start, int end) {
+void Dijkstra(int start, int end, int Case) {
 	fill(Vertex, Vertex + N + 1, INF);
 	Vertex[start] = 0;
 	pq.push(pair<int, int>(start, Vertex[start]));
@@ -81,8 +85,13 @@ void Dijkstra(int start, int end) {
 			}
 		}
 	}
-	
-	if (Vertex[end] == INF) len = NOPATH;
-	else len += Vertex[end];
+	if (Case == 1) {
+		if (Vertex[end] == INF) len = NOPATH;
+		else len += Vertex[end];
+	}
+	else if (Case == 2) {
+		if (Vertex[end] == INF) len2 = NOPATH;
+		else len2 += Vertex[end];
+	}
 }
 
