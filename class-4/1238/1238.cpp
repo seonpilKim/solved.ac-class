@@ -21,7 +21,7 @@ void Dijkstra();
 
 struct compare {
 	bool operator()(pair<int, int> v1, pair<int, int> v2) {
-		return v1.second < v2.second;
+		return v1.second > v2.second;
 	}
 };
 
