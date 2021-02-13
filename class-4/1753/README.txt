@@ -15,3 +15,14 @@
 ----
 첫째 줄부터 V개의 줄에 걸쳐, i번째 줄에 i번 정점으로의 최단 경로의 경로값을 출력한다. 시작점 자신은 0으로 출력하고, 경로가 존재하지 않는 경우에는 INF를 출력하면 된다.
 
+풀이
+----
+Edge (간선) 를 Adjacent Matrix (인접행렬) 로 구현하는 경우
+ - Space Complexity : O(V^2)
+ - 20,000 * 20,000 * 4byte = 1.6GB (Memory Limit Exceed)
+
+Edge를 Adjacent List (인접리스트) 로 구현하는 경우
+ - Space Complexity : O(V + E)
+ - (20,000 + 300,000) * 4byte = 1.3MB
+
+Direction Graph + Single-source이므로 Dijkstra Algorithm으로 해결하였다.

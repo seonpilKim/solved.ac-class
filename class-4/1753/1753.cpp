@@ -5,22 +5,55 @@
 
 #define INF INT_MAX
 #define START 0
-#define NONE -1
-#define VISITED -1
-#define UNVISITED -2
 
 using namespace std;
 
-struct compare {
-	bool operator()(pair<int, int> v1, pair<int, int> v2) {
-		return v1.second > v2.second;
+class Edge {
+public:
+	int v2;
+	int len;
+	Edge* next;
+	Edge(int v2, int len) {
+		this->v2 = v2;
+		this->len = len;
+		this->next = nullptr;
 	}
 };
 
-priority_queue<pair<int, int>, vector<pair<int, int>>, compare> pq;
+class Vertex {
+public:
+	int len;
+	int edges;
+	Edge* head;
+	Edge* tail;
+	Vertex() {
+		this->len = INF;
+		this->edges = 0;
+		this->head = nullptr;
+		this->tail = nullptr;
+	}
+
+	void addEdge(int v2, int len) {
+		if (edges == 0) {
+			this->head = this->tail = new Edge(v2, len);
+		}
+		else {
+			Edge* newEdge = new Edge(v2, len);
+			this->tail->next = newEdge;
+			this->tail = newEdge;
+		}
+		this->edges++;
+	}
+};
+
 int V, E, K;
-int* Vertex;
-int** Edge;
+Vertex* vertex;
+struct compare {
+	bool operator()(pair<int, Vertex> v1, pair<int, Vertex> v2) {
+		return v1.second.len > v2.second.len;
+	}
+};
+priority_queue<pair<int, Vertex>, vector<pair<int, Vertex>>, compare> pq;
 
 void input();
 void Dijkstra();
@@ -35,43 +68,39 @@ int main() {
 
 void input() {
 	int u, v, w;
+
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+
 	cin >> V >> E >> K;
-	Vertex = new int[V + 1];
-	fill(Vertex, Vertex+V+1, INF);
-	Vertex[K] = START;
-	pq.push(make_pair(K, Vertex[K]));
-
-
-	// 최대 30만*30만 Byte 메모리 필요 -> 메모리초과
-	Edge = new int* [E + 1];
-	for (int i = 0; i <= E; i++) {
-		Edge[i] = new int[E + 1];
-		fill(Edge[i], Edge[i] + E + 1, NONE);
-	}
+	vertex = new Vertex[V + 1];
+	vertex[K].len = START;
+	pq.push(make_pair(K, vertex[K]));
 
 	for (int i = 0; i < E; i++) {
 		cin >> u >> v >> w;
 		// 방향그래프
-		Edge[u][v] = w;
+		vertex[u].addEdge(v, w);
+
 	}
 }
 
 void Dijkstra() {
 	while (!pq.empty()) {
 		int v1 = pq.top().first; pq.pop();
-		for (int v2 = 1; v2 <= V; v2++) {
-			if (Edge[v1][v2] != NONE) {
-				int sum = Edge[v1][v2] + Vertex[v1];
-				if (sum < Vertex[v2]) {
-					Vertex[v2] = sum;
-					pq.push(make_pair(v2, Vertex[v2]));
+		if (vertex[v1].edges) {
+			for (Edge* curEdge = vertex[v1].head; curEdge != nullptr; curEdge = curEdge->next) {
+				int sum = curEdge->len + vertex[v1].len;
+				if (sum < vertex[curEdge->v2].len) {
+					vertex[curEdge->v2].len = sum;
+					pq.push(make_pair(curEdge->v2, vertex[curEdge->v2]));
 				}
 			}
 		}
 	}
 
 	for (int i = 1; i <= V; i++) {
-		if (Vertex[i] == INF) cout << "INF\n";
-		else cout << Vertex[i] << "\n";
+		if (vertex[i].len == INF) cout << "INF\n";
+		else cout << vertex[i].len << "\n";
 	}
 }
