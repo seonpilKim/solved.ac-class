@@ -1,42 +1,57 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <queue>
 
 using namespace std;
 
+vector<int> getPi(const string&);
+vector<int> kmp(const string&, const string&);
+
 int main() {
 	string T, P;
-	int n = 0;
-	vector<int> loc;
-	queue<pair<int, int>> q;
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
 	getline(cin, T);
 	getline(cin, P);
 
-	for (int i = 0; i < T.size(); i++) {
-		if (T[i] == P[0]) q.push(make_pair(i, 0));
-		int size = q.size();
-		for (int j = 0; j < size; j++) {
-			if (T[i] == P[q.front().second]) {
-				q.front().second++;
-				if (q.front().second == P.size()) {
-					n++;
-					loc.push_back(i - P.size() + 2);
-					q.pop();
-				}
-				else {
-					q.push(q.front());
-					q.pop();
-				}
-			}
-			else q.pop();		
-		}
-	}
+    auto ans = kmp(T, P);
 
-	cout << n << "\n";
-	for (int i : loc) {
-		cout << i << "\n";
-	}
+    cout << ans.size() << "\n";
+    for (int idx : ans) {
+        cout << idx << "\n";
+    }
 
 	return 0;
+}
+
+vector<int> getPi(const string &p) { 
+    int m = p.size();
+	vector<int> pi(m); 
+	for (int i = 1, j = 0; i < m; i++) { 
+		while (j > 0 && p[i] != p[j]) 
+			j = pi[j - 1]; 
+		if (p[i] == p[j]) pi[i] = ++j; 
+	} 
+	return pi; 
+}
+
+vector<int> kmp(const string &s, const string &p) {
+    vector<int> ans;
+    auto pi = getPi(p);
+    int n = s.size(), m = p.size();
+    for (int i = 0, j = 0; i < n; i++) {
+        while (j > 0 && s[i] != p[j])
+            j = pi[j - 1];
+        if (s[i] == p[j]) {
+            if (j == m - 1) {
+                ans.push_back(i - m + 2);
+                j = pi[j];
+            }
+            else j++;          
+        }
+    }
+    return ans;
 }
