@@ -1,5 +1,4 @@
 #include <iostream>
-#include <limits.h>
 #include <vector>
 
 using namespace std;
@@ -15,6 +14,8 @@ bool Bellman_Ford(int*, vector<pair<int, int>>*);
 int main() {
 	int TC;
 	int S, E, T;
+	int Vertex[MAX_SIZE];
+	vector<pair<int, int>> Edge[MAX_SIZE];
 
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
@@ -22,9 +23,6 @@ int main() {
 	cin >> TC;
 
 	for (int i = 0; i < TC; i++) {
-		int Vertex[MAX_SIZE];
-		vector<pair<int, int>> Edge[MAX_SIZE];
-
 		cin >> N >> M >> W;
 
 		// √ ±‚»≠
