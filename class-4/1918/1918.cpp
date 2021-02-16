@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void Postfix(string);
+void Postfix(const string&);
 
 int main() {
 	string infix;
@@ -15,7 +15,7 @@ int main() {
 	return 0;
 }
 
-void Postfix(string infix) {
+void Postfix(const string& infix) {
 	stack<char> s;
 
 	for (int i = 0; i < infix.size(); i++) {
