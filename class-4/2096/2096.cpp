@@ -4,24 +4,18 @@
 using namespace std;
 
 #define MAX_SIZE 100000
-#define MIN 0
-#define MAX 1
 
 int N;
-int** arr;
-int dp[MAX_SIZE][2];
+int arr[MAX_SIZE][3];
+pair<int, int> dp[3];
 
-void move_down(int, int, int);
+void move_down();
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
 
 	cin >> N;
-	arr = new int*[N];
-	for (int i = 0; i < N; i++) {
-		arr[i] = new int[3];
-	}
 
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -29,36 +23,27 @@ int main() {
 		}
 	}
 
-	move_down(0, 0 ,0);
-	move_down(0, 1 ,0);
-	move_down(0, 2, 0);
-
-	cout << dp[N - 1][MAX] << " " << dp[N - 1][MIN];
+	move_down();
 
 	return 0;
 }
 
-void move_down(int h, int w, int val) {
-	int value = arr[h][w] + val;
+void move_down() {
+	dp[0].first = dp[0].second = arr[0][0];
+	dp[1].first = dp[1].second = arr[0][1];
+	dp[2].first = dp[2].second = arr[0][2];
 
-	if (dp[h][MIN] == 0) dp[h][MIN] = value;
-	else dp[h][MIN] = min(dp[h][MIN], value);
-	if (dp[h][MAX] == 0) dp[h][MAX] = value;
-	else dp[h][MAX] = max(dp[h][MAX], value);
+	for (int i = 1; i < N; i++) {
+		dp[0].first = min(dp[0].first + arr[i][0], dp[0].first + arr[i][1]);
+		dp[0].second = max(dp[0].second + arr[i][0], dp[0].second + arr[i][1]);
 
-	if (h < N - 1) {
-		if (w == 0) {
-			move_down(h + 1, w, value);
-			move_down(h + 1, w + 1, value);
-		}
-		else if (w == 1) {
-			move_down(h + 1, w - 1, value);
-			move_down(h + 1, w, value);
-			move_down(h + 1, w + 1, value);
-		}
-		else if (w == 2) {
-			move_down(h + 1, w - 1, value);
-			move_down(h + 1, w, value);
-		}
+		dp[1].first = min(min(dp[1].first + arr[i][0], dp[1].first + arr[i][1]), dp[1].first + arr[i][2]);
+		dp[1].second = max(max(dp[1].second + arr[i][0], dp[1].second + arr[i][1]), dp[1].second + arr[i][2]);
+
+		dp[2].first = min(dp[2].first + arr[i][1], dp[2].first + arr[i][2]);
+		dp[2].second = max(dp[2].second + arr[i][1], dp[2].second + arr[i][2]);
 	}
+
+	cout << max(max(dp[0].second, dp[1].second), dp[2].second) << " ";
+	cout << min(min(dp[0].first, dp[1].first), dp[2].first);
 }
