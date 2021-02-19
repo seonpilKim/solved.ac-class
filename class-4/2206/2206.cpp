@@ -53,44 +53,42 @@ int BFS() {
 			int x = xy.first;
 			int y = xy.second;
 
-			if (Map[x][y].second == UNVISITED) {
-				if (x == N - 1 && y == M - 1) return ++n;
-				Map[x][y].second = VISITED;
-				bool isbroken = q2.front().second;
+			if (x == N - 1 && y == M - 1) return ++n;
+			Map[x][y].second = VISITED;
+			bool isbroken = q2.front().second;
 
-				if (x > 0) {
-					if (Map[x - 1][y].second == UNVISITED) {
-						if (Map[x - 1][y].first == OPEN) q.push(make_pair(make_pair(x - 1, y), isbroken));
-						else if (isbroken == false && Map[x - 1][y].first == CLOSE) {
-							q.push(make_pair(make_pair(x - 1, y), true));
-						}
-					}
-				}
-				if (x < N - 1) {
-					if (Map[x + 1][y].second == UNVISITED) {
-						if (Map[x + 1][y].first == OPEN) q.push(make_pair(make_pair(x + 1, y), isbroken));
-						else if (isbroken == false && Map[x + 1][y].first == CLOSE) {
-							q.push(make_pair(make_pair(x + 1, y), true));
-						}
-					}
-				}
-				if (y > 0) {
-					if (Map[x][y - 1].second == UNVISITED) {
-						if (Map[x][y - 1].first == OPEN) q.push(make_pair(make_pair(x, y - 1), isbroken));
-						else if (isbroken == false && Map[x][y - 1].first == CLOSE) {
-							q.push(make_pair(make_pair(x, y - 1), true));
-						}
-					}
-				}
-				if (y < M - 1) {
-					if (Map[x][y + 1].second == UNVISITED) {
-						if (Map[x][y + 1].first == OPEN) q.push(make_pair(make_pair(x, y + 1), isbroken));
-						else if (isbroken == false && Map[x][y + 1].first == CLOSE) {
-							q.push(make_pair(make_pair(x, y + 1), true));
-						}
+			if (x > 0) {
+				if (Map[x - 1][y].second == UNVISITED) {
+					if (Map[x - 1][y].first == OPEN) q.push(make_pair(make_pair(x - 1, y), isbroken));
+					else if (isbroken == false && Map[x - 1][y].first == CLOSE) {
+						q.push(make_pair(make_pair(x - 1, y), true));
 					}
 				}
 			}
+			if (x < N - 1) {
+				if (Map[x + 1][y].second == UNVISITED) {
+					if (Map[x + 1][y].first == OPEN) q.push(make_pair(make_pair(x + 1, y), isbroken));
+					else if (isbroken == false && Map[x + 1][y].first == CLOSE) {
+						q.push(make_pair(make_pair(x + 1, y), true));
+					}
+				}
+			}
+			if (y > 0) {
+				if (Map[x][y - 1].second == UNVISITED) {
+					if (Map[x][y - 1].first == OPEN) q.push(make_pair(make_pair(x, y - 1), isbroken));
+					else if (isbroken == false && Map[x][y - 1].first == CLOSE) {
+						q.push(make_pair(make_pair(x, y - 1), true));
+					}
+				}
+			}
+			if (y < M - 1) {
+				if (Map[x][y + 1].second == UNVISITED) {
+					if (Map[x][y + 1].first == OPEN) q.push(make_pair(make_pair(x, y + 1), isbroken));
+					else if (isbroken == false && Map[x][y + 1].first == CLOSE) {
+						q.push(make_pair(make_pair(x, y + 1), true));
+					}
+				}
+			}		
 			q2.pop();
 		}
 
