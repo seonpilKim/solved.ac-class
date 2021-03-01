@@ -6,10 +6,8 @@
 using namespace std;
 
 int stiker[2][MAX];
-int n;
-int Max;
 
-void findMax(int, int, int);
+int findMax(int);
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -20,6 +18,7 @@ int main() {
 	cin >> T;
 
 	while (T--) {
+		int n;
 		cin >> n;
 
 		for (int r = 0; r < 2; r++) {
@@ -27,27 +26,29 @@ int main() {
 				cin >> stiker[r][c];
 			}
 		}
-		Max = 0;
-		findMax(0, 0, 0);
-		findMax(1, 0, 0);
-		cout << Max << '\n';
+
+		cout << findMax(n) << '\n';
 	}
 
 	return 0;
 }
 
-void findMax(int r, int c, int v) {
-	int value = v + stiker[r][c];
-	Max = max(value, Max);
-	
-	switch (r) {
-	case 0 :
-		if (c + 1 < n) findMax(r + 1, c + 1, value);
-		if (c + 2 < n) findMax(r + 1, c + 2, value);
-		break;
-	case 1 :
-		if (c + 1 < n) findMax(r - 1, c + 1, value);
-		if (c + 2 < n) findMax(r - 1, c + 2, value);
-		break;
+int findMax(int n) {
+	int c = 0;
+	int Max = 0;
+
+	while (true) {
+		if (c + 2 <= n) {
+			stiker[1][c + 2] += max((stiker[0][c]), (stiker[1][c] + stiker[0][c + 1]));
+			stiker[0][c + 2] += max((stiker[1][c]), (stiker[0][c] + stiker[1][c + 1]));
+			c += 2;
+		}
+		else if (c + 1 == n) {
+			stiker[1][c + 1] += stiker[0][c];
+			stiker[0][c + 1] += stiker[1][c];
+			break;
+		}
 	}
+
+	return max(stiker[0][n - 1], stiker[1][n - 1]);
 }
