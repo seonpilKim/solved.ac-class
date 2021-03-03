@@ -6,6 +6,7 @@
 using namespace std;
 
 int stiker[2][MAX];
+int dp[2][MAX];
 
 int findMax();
 
@@ -27,7 +28,7 @@ int input() {
 	cin >> n;
 
 	for (int r = 0; r < 2; r++) {
-		for (int c = 0; c < n; c++) {
+		for (int c = 1; c <= n; c++) {
 			cin >> stiker[r][c];
 		}
 	}
@@ -37,24 +38,16 @@ int input() {
 
 int findMax() {
 	int n = input();
-	int c = 0;
 
-	if (n == 1) return max(stiker[0][0], stiker[1][0]);
+	if (n == 1) return max(stiker[0][1], stiker[1][1]);
 
-	while (true) {
-		if (c + 2 < n) {
-			stiker[1][c + 2] += max((stiker[0][c]), (stiker[1][c] + stiker[0][c + 1]));
-			stiker[0][c + 2] += max((stiker[1][c]), (stiker[0][c] + stiker[1][c + 1]));
-			c += 2;
+	dp[0][1] = stiker[0][1];
+	dp[1][1] = stiker[1][1];
 
-			if (c == n - 1) break;
-		}
-		else if (c + 1 == n - 1) {
-			stiker[1][c + 1] += stiker[0][c];
-			stiker[0][c + 1] += stiker[1][c];
-			break;
-		}
+	for (int i = 2; i <= n; i++) {
+		dp[0][i] = max(dp[1][i - 2], dp[1][i - 1]) + stiker[0][i];
+		dp[1][i] = max(dp[0][i - 2], dp[0][i - 1]) + stiker[1][i];
 	}
 
-	return max(stiker[0][n - 1], stiker[1][n - 1]);
+	return max(dp[0][n], dp[1][n]);
 }
