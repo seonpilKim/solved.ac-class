@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <vector>
 
 using namespace std;
@@ -15,7 +14,6 @@ int main() {
 	cin >> str >> boomb;
 
 	int size = str.size();
-	int cont = 0;
 
 	for (int i = 0; i < str.size(); i++) {
 		ans.push_back(str[i]);
